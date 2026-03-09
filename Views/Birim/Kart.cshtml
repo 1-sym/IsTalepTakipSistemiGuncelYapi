@@ -1,0 +1,76 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+@using IsTakipSistemi.Data;
+  
+}
+@model IsTakipSistemi.Models.BirimModel
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<h1 style="color:brown">Personel Birimi Ekle</h1>
+<hr />
+<div class="row">
+    <div class="col-6">
+        <a href="@String.Format("/Birim/Index")" class="float-start" style="margin-top:5px; margin-left:5px">
+            <i class="fa fa-arrow-left h1 mb-0 text-primary" style="font-size:16px"><span style="margin-left:10px; ">Geri Dön</span></i>
+        </a>
+    </div></div>
+<form id="formKayit" name="formKayit" autocomplete="off">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="row">
+            
+              
+           
+            <div class="form-group">
+                <label for="member-name" class="col-form-label">Personel Birimi Adı</label>
+                @Html.TextBoxFor(m => m.kartVerisi.birimAdi, new { @class = "form-control", maxlength = "50", placeholder = "Birim Adı" })
+            </div>
+            
+            
+         
+           
+            @Html.HiddenFor(model => model.kartVerisi.birimID)
+           
+        </div>
+        <hr />
+        <button type="button" onclick="ekle()" id="btnKaydet" class="btn btn-success" data-bs-toggle="modal">
+            Kaydet
+        </button>
+    </div>
+</form>
+<script>
+    function ekle() {
+        var valdata = $("#formKayit").serialize();
+        console.table(valdata);
+        $.ajax({
+            url: "/Birim/Kaydet/",
+            type: "Post",
+            data: valdata,
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    Swal.fire(
+                        'Hata',
+                        response.message,
+                        'error'
+                    );
+                    return false;
+                }
+                else {
+                    Swal.fire(
+                        'Başarılı',
+                        response.message,
+                        'success'
+                    ).then(
+                    function () {
+                        var deger = String(document.getElementById("yenimi").value);
+                      
+                        if (deger == "True") {
+                            window.location.reload();
+                        }
+                    })
+                }
+            }
+        });
+    }
+</script>

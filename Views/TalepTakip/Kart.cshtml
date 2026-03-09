@@ -1,0 +1,129 @@
+﻿@{
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+@using IsTakipSistemi.Data;
+    varlik vari = new varlik();
+    List<SelectListItem> IsTalebiCek = new List<SelectListItem>();
+    KullaniciAYRINTI kim = (KullaniciAYRINTI)ViewBag.mevcut;
+    PersonelAYRINTI Personel = vari.PersonelAYRINTIler.FirstOrDefault(q => q.i_kullaniciID == kim.kullaniciID);
+    List<IsTalebiAYRINTI> hepsi = vari.IsTalebiAYRINTIler.Where(q => q.i_personelID == Personel.personelID && q.talepTamamlandimi==0).ToList();
+    for (int i = 0; i < hepsi.Count; i++)
+    {
+        SelectListItem yeni = new SelectListItem();
+        yeni.Text = hepsi[i].talepAyrinti;
+        yeni.Value = hepsi[i].talepID.ToString();
+        
+        IsTalebiCek.Add(yeni);
+    
+
+}
+
+    List<SelectListItem> durum = new List<SelectListItem>();
+    
+    for (int i = 0; i <= 1; i++)
+    {
+        SelectListItem yeni = new SelectListItem();
+        if(i==0)
+            yeni.Text = "Hayır";
+       else
+            yeni.Text = "Evet";
+        yeni.Value = i.ToString();
+
+        durum.Add(yeni);
+
+
+    }
+    List<SelectListItem> tamamlanmaOrani = new List<SelectListItem>();
+    
+    for (int i = 0; i <= 100; i=i+10)
+    {
+        SelectListItem yeni = new SelectListItem();
+        if(i==0)
+            yeni.Text = i.ToString();
+       else
+            yeni.Text = i.ToString();
+        yeni.Value = i.ToString();
+
+        tamamlanmaOrani.Add(yeni);
+
+
+    }
+}
+@model IsTakipSistemi.Models.TalepTakipModel
+<script src="~/assets/js/jquery.dataTables.min.js"></script>
+<h1 style="color:brown">Talep Takip Ekle</h1>
+<hr />
+<div class="row">
+    <div class="col-6">
+        <a href="@String.Format("/TalepTakip/Index")" class="float-start" style="margin-top:5px; margin-left:5px">
+            <i class="fa fa-arrow-left h1 mb-0 text-primary" style="font-size:16px"><span style="margin-left:10px; ">Geri Dön</span></i>
+        </a>
+    </div></div>
+<form id="formKayit" name="formKayit" autocomplete="off">
+    <div class="col-xl-12 col-lg-12 col-md-12 col-sm-12 col-12">
+        <div class="row">
+            
+              
+            <div class="form-group">
+                <label for="member-name" class="col-form-label">Talep</label>
+                @Html.DropDownListFor(m => m.kartVerisi.i_talepID, IsTalebiCek, "Lütfen Seçiniz", new { @class = "form-control select2"})
+            </div>
+            <div class="form-group">
+                <label for="member-name" class="col-form-label">Talep Oranı</label>
+                @Html.DropDownListFor(m => m.kartVerisi.tamamlanmaOrani, tamamlanmaOrani, "Lütfen Seçiniz", new { @class = "form-control select2"})
+            </div>
+
+           
+            <div class="form-group">
+                <label for="member-name" class="col-form-label">Talep Durum Bilgi</label>
+                @Html.TextAreaFor(m => m.kartVerisi.talepDurumBilgi, new { @class = "form-control", maxlength = "250", placeholder = "Talep Durum Bilgi" })
+            </div>
+
+          
+         
+           
+            @Html.HiddenFor(model => model.kartVerisi.talepTakipID)
+           
+        </div>
+        <hr />
+        <button type="button" onclick="ekle()" id="btnKaydet" class="btn btn-success" data-bs-toggle="modal">
+            Kaydet
+        </button>
+    </div>
+</form>
+<script>
+    function ekle() {
+        var valdata = $("#formKayit").serialize();
+        console.table(valdata);
+        $.ajax({
+            url: "/TalepTakip/Kaydet/",
+            type: "Post",
+            data: valdata,
+            contentType: "application/x-www-form-urlencoded; charset=UTF-8",
+            dataType: "json",
+            success: function (response) {
+                if (!response.success) {
+                    Swal.fire(
+                        'Hata',
+                        response.message,
+                        'error'
+                    );
+                    return false;
+                }
+                else {
+                    Swal.fire(
+                        'Başarılı',
+                        response.message,
+                        'success'
+                    ).then(function () {
+                        var deger = String(document.getElementById("yenimi").value);
+                        
+                        if (deger == "True") {
+                            window.location.reload();
+                        }
+                    })
+                }
+            }
+        });
+    }
+</script>

@@ -1,0 +1,15 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace IsTakipSistemi.Data
+{
+    public  class TalepTakip
+    {
+        [Key]
+        public int talepTakipID { get; set; }
+        public int i_talepID { get; set; }
+        public DateTime tarih { get; set; }
+        public string talepDurumBilgi { get; set; }
+        public byte varmi { get; set; }
+        public byte? tamamlanmaOrani { get; set; }
+    }
+}

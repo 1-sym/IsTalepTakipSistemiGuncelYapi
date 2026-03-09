@@ -1,0 +1,54 @@
+Ýþ Takip Sistemi Veri Modeli 
+Bu veri modeli; kullanýcý yetkilendirme, organizasyonel birim yapýsý, personel yönetimi ve bu personellere atanan iþ taleplerinin takibini kapsayan 7 ana tablo ve bu tablolarý anlamlandýran 6 "View" (Görünüm) üzerine kuruludur.
+
+1. Temel Yapý ve Tablolar
+Modeli üç ana katmanda inceleyebiliriz:
+
+A. Kullanýcý
+KullaniciTuru: Sisteme giriþ yapacak kiþilerin rollerini (Yönetici, Operatör vb.) tanýmlar.
+
+Kullanici: Sistemi aktif olarak kullanan, iþ talebi açan veya personeli yöneten kiþilerin bilgilerini (TC No, Telefon, Þifre) tutar.
+
+B. Personel
+Birim: Þirket içerisindeki departmanlarý (Yazýlým, Donaným, ÝK vb.) temsil eder.
+
+Personel: Ýþi gerçekleþtirecek olan çalýþanlarýn bilgilerini tutar. Her personel bir birime baðlýdýr ve ayný zamanda sistemde bir kullanýcý hesabý ile iliþkilendirilmiþtir. Sisteme giriþ yapabilir
+ve kendilerine atanmýþ olan iþlerle ilgili takip oluþturabilir.
+
+C. Ýþ ve Süreç Takibi
+IsOncelikBilgisi: Ýþlerin aciliyet durumunu (Düþük, Acil vb.) sýnýflandýrýr.
+
+IsTalebi: Ana iþ emridir. Ýþi kimin istediðini, hangi personelin yapacaðýný ve iþin detaylarýný içerir.
+
+TalepTakip: Bir iþ talebi üzerinde yapýlan ara iþlemleri, ilerleme bilgilerini ve tamamlanma oranlarýný tutan tablodur.
+
+2. Ýliþkisel Þema 
+Sistemdeki tablolar arasýndaki hiyerarþik bað þu þekildedir:
+
+Kullanýcý -> Kullanýcý Türü: Her kullanýcýnýn mutlaka bir rolü vardýr.
+
+Personel -> Birim & Kullanýcý: Her personel bir departmana aittir ve sistemde bir kullanýcý kaydýyla eþleþir.
+
+Ýþ Talebi -> Personel & Kullanýcý: Bir iþi talep eden bir "Kullanýcý" ve bu iþi yerine getirmekle yükümlü bir "Personel" bulunur.
+
+Talep Takip -> Ýþ Talebi: Her takip kaydý belirli bir iþ talebine (1-n iliþkisi) baðlýdýr.
+
+3. Öne Çýkan Teknik Özellikler
+Mantýksal Silme (varmi sütunu): Tablolarýn hemen hepsinde bulunan varmi tinyint sütunu, verilerin veritabanýndan tamamen silinmek yerine "pasif" hale getirilmesine olanak tanýr. Böylece oluþabilecek hatalý
+bir silme iþleminde geri alýnabilir bir yapý ortaya çýkarýr.
+
+Veri Güvenliði: TcNo ve telefon alanlarý Unique (benzersiz) kýsýtlamasý ile korunarak mükerrer kayýt engellenmiþtir.
+
+4. Sistem Ýþleyiþi
+Bir kullanýcý, sisteme giriþ yapar.
+
+Biir iþ talebi oluþturur ve bunu seçtiði birimindeki bir personele atar.
+
+Ýþin önceliðini belirleyerek personeli durumla ilgili bilgilendirir.
+
+Ýlgili personel iþe baþladýðýnda, talep takip tablosunda iþin hangi süreçte olduðu ve hangi oranda tamamlandýðý bilgisini girer. Tamamlanma oraný %100 olduðunda iþ talebi tamamlandý olarak
+güncellenir.
+
+Sisteme kullanýcý bilgileri ile girilir. Menüler ve sayfalar kullanýcý yetkilerine göre sýnýrlandýrýlýr.
+Ana sayfada aktif olan tamamlanmamýþ iþ talepleri görülür. Yazýlýmcý ve yönetici gibi kullanýcýlar tüm iþ taleplerini görürken
+personeller sadece kendilerine atanmýþ olan talepleri görerek iþlem baþlatabilir.
